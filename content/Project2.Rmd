@@ -1,0 +1,252 @@
+---
+title: "Project 2"
+author: "SDS348 Fall 2019"
+date: ""
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+install.packages("formatR")
+opts_chunk$set(fig.align="center", fig.height=5, message=FALSE, warning=FALSE, fig.width=8, tidy.opts=list(width.cutoff=60),tidy=TRUE)
+library(tidyverse)
+library(dplyr)
+library(MASS)
+library(ggplot2)
+library(sandwich)
+library(lmtest)
+library(plotROC)
+library(glmnet)
+class_diag<-function(probs,truth){
+  
+  tab<-table(factor(probs>.5,levels=c("FALSE","TRUE")),truth)
+  acc=sum(diag(tab))/sum(tab)
+  sens=tab[2,2]/colSums(tab)[2]
+  spec=tab[1,1]/colSums(tab)[1]
+  ppv=tab[2,2]/rowSums(tab)[2]
+
+  if(is.numeric(truth)==FALSE & is.logical(truth)==FALSE) truth<-as.numeric(truth)-1
+  
+  #CALCULATE EXACT AUC
+  ord<-order(probs, decreasing=TRUE)
+  probs <- probs[ord]; truth <- truth[ord]
+  
+  TPR=cumsum(truth)/max(1,sum(truth)) 
+  FPR=cumsum(!truth)/max(1,sum(!truth))
+  
+  dup<-c(probs[-1]>=probs[-length(probs)], FALSE)
+  TPR<-c(0,TPR[!dup],1); FPR<-c(0,FPR[!dup],1)
+  
+  n <- length(TPR)
+  auc<- sum( ((TPR[-1]+TPR[-n])/2) * (FPR[-1]-FPR[-n]) )
+
+  data.frame(acc,sens,spec,ppv,auc)
+}
+```
+
+Javier Granados II, jg65347
+
+---
+
+### Introduction
+
+```{R}
+library(fivethirtyeight)
+glimpse(mlb_as_play_talent)
+```
+The dataset used will be from the fivethirtyeight package known as mlb_as_team_talent. This data set includes every team from every Major League Baseball All-Star game (National and American League). Baseball Reference attempted to rank these best-of-the-best teams by a variety of stats, which mainly tried to specify how many runs are positively contributed (add if on offense, saved if pitching/on defense) by a team or how "talented" this team was, which factored into positive run contribution as well. The main variables used for analysis included 1)lgid (which league the team belonged to), 2)tm_off_talent (total runs of offensive talent above average per game (36 plate appearances)), 3)tm_def_talent (total runs of fielding talent above average per game (36 plate appearances)), 4)tm_pit_talent (total runs of pitching talent above average per game (9 innings)), 5)talent_rspg (expected runs scored per game based on talent), and 6) unadj_pyth (unadjusted pythagorean talent rating). This "talent" was computed using the run portion of the Wins Above Replacement (WAR- a common MLB stat) that was then adjusted for age regression of a team's players and expected performance to the mean for the ages of the players in question. Pythogorean talent is sourced from the Pythogorean Theorum of Baseball Formula. 
+
+### **1. MANOVA 
+
+```{R}
+#If MANOVA is insignificant, discuss number of tests done if significant and P of at least 1 type I error
+mlb_as_team_talent$lgid<-as.factor(mlb_as_team_talent$lgid)
+MLBman<-manova(cbind(tm_off_talent,tm_def_talent,tm_pit_talent, unadj_pyth)~lgid,data=mlb_as_team_talent)
+summary(MLBman)
+```
+Not all numeric varaibles were used, for some variables were adjusted/based off on other variables (ex: adj_pyth calculated based on unadj_pyth, and talent_rspg based on tm_off_talent). Although yearid is considered numeric, it should be considered as categorical. Lastly, mlb_avg_rpg uses all MLB players (not just All-Stars), so it would not make sense to use this variable since the variables used only some of the same players). After performing a MANOVA on the variables in question, the p value was insignificant (p=.46). Therefore, the null hypothesis (for team offensive, defensive, and pitching runs above average, runs based on talent, and talent rank, means of each league are equal) failed to be rejected.
+
+```{R}
+#P(at least one type I error)
+1-((1-.05)^5)
+```
+
+However, if the results would have been significant, 5 tests would have been performed (1 MANOVA, 4 ANOVAS). The probability of at least one Type I error would be about .23. 
+
+### **2. Randomization Test
+
+```{R}
+t.test(unadj_pyth~lgid,data=mlb_as_team_talent)
+```
+A t-test was performed with unadj_pyth by league. The null hypothesis is that the difference in means in unadj_pyth by league is equal to zero, or the mean unadjusted talent scores between each league are the same on average. The alternative hypothesis is that the difference in means is different for each league, or not the same on average. The p-value for the unadj_pyth by league was insignificant (p=.64), meaning that the null hypothesis failed to be rejected. 
+```{R}
+set.seed(348)
+mlbtest<-vector()
+for(i in 1:5000){
+tmean<-data.frame(unpyth=sample(mlb_as_team_talent$unadj_pyth),league=mlb_as_team_talent$lgid)
+mlbtest[i]<-mean(tmean[tmean$league=="AL",]$unpyth)-
+ mean(tmean[tmean$league=="NL",]$unpyth)}
+data.frame(mlbtest)%>%ggplot(aes(mlbtest))+geom_histogram(aes(y=..density..), bins=30)+geom_density()+ggtitle("MLB Density Plot")+labs(x="Null Distribution", y= "Density")
+```
+
+```{R}
+#v=ALmean-Nlmean
+0.6397462-0.6378407 
+mean(mlbtest>.0019055)*2
+```
+The p-value for the permutation test is .648, meaning this is the probability of getting a mean difference as the one in this random distribution. 
+
+
+### **3. Linear Regression Model
+  
+```{R}
+mlb_as_team_talent$team_c<-mlb_as_team_talent$tm_off_talent-mean(mlb_as_team_talent$tm_off_talent, na.rm = T)
+mlblm<-lm(unadj_pyth~team_c * lgid, data = mlb_as_team_talent)
+summary(mlblm)
+```
+When controlling for offensive talent (mean centered) and league (AL), unadjusted python (talent) rating is .64. When controlling for league, an increase in offensive talent raised talent rating by .095. When controlling for offensive talent, being in the National League decreased talent rating by .004. If in the NL, an increase in offensive talent actually decreased talent rating by .02.The multiple R-squared value is 0.5347, meaning over half of the variation in the outcome is explained by the model
+```{R}
+mlb_as_team_talent%>%ggplot(aes(team_c,unadj_pyth, color=lgid))+geom_point()+geom_smooth(method = 'lm',se=F)+ggtitle("Linear Regression Model")+labs(x="Centered Offensive Talent Rating (team_c)", y="Talent Rating (unadj_pyth)")
+```
+
+```{R}
+resids<-mlblm$residuals
+fitvals<-mlblm$fitted.values
+#linearity and homoskedasicity 
+ggplot()+geom_point(aes(fitvals,resids))+geom_hline(yintercept=0, color='red')+ggtitle("Linearity and Homoskedasicity Test")+labs(x="Fitted Values", y="Residuals")
+#normality
+ggplot()+geom_histogram(aes(resids), bins=20)+ggtitle("Normality Test")+labs(x="Residuals", y="Frequency")
+```
+Assumptions appear to have been met graphically.
+```{R}
+
+coeftest(mlblm, vcov=vcovHC(mlblm))
+```
+
+No changes in significances occurred; the only significant coefficient is offensive talent when centered. Estimate value remained the same as well. 
+
+
+### **4 Bootstrapped Standard Errors for Model Above
+
+```{R}
+boot_dat<-mlb_as_team_talent[sample(nrow(mlb_as_team_talent),replace=TRUE),]
+samp_distn<-replicate(5000, {
+ boot_dat<-mlb_as_team_talent[sample(nrow(mlb_as_team_talent),replace=TRUE),]
+ mlblm<-lm(unadj_pyth~team_c*lgid, data = boot_dat)
+ coef(mlblm)
+})
+samp_distn%>%t%>%as.data.frame%>%summarize_all(sd)
+
+```
+The bootstrapped SEs are all close to zero, which is still rather close to the original and robust SEs. Therefore, we would still fail to reject the null hypothesis. 
+
+
+
+### **5. Logistic Regression
+
+```{R}
+mlbglm<-glm(lgid~unadj_pyth+tm_off_talent, family="binomial", data=mlb_as_team_talent)
+coeftest(mlbglm)
+```
+Although none are significant, when controlling for offenseive talent, talent rating descreases the log-odds of being in the NL by about -12. When controlling for talent rating, an increase in offensive talent increases log-odds by 1.57.
+```{R}
+prob<-predict(mlbglm,type="response")
+pred<-ifelse(prob>.5,1,0)
+table(truth=mlb_as_team_talent$lgid, prediction=pred)%>%addmargins
+(47+44)/172 # accuracy
+44/86 # tpr (sensitivity)
+47/86 # tnr (specificity)
+44/83 # ppv (precision)
+```
+Based on the confusion matrix, accuracy, TPR, TNR, and PPV are all around .5.
+```{R}
+mlb_as_team_talent$logit<-predict(mlbglm) #get predicted log-odds
+ggplot(mlb_as_team_talent,aes(logit, fill=lgid))+geom_density(alpha=.3)+
+  geom_vline(xintercept=0,lty=2)+ggtitle("Density of Log-Odds")+labs(x="Log-Odds", y="Density")
+```
+
+```{R}
+MLBROCplot<-ggplot(mlb_as_team_talent)+geom_roc(aes(d=lgid,m=prob), n.cuts=0)+geom_segment(aes(x=0,y=0,xend=1,yend=1),lty=2)+
+ scale_x_continuous(limits = c(0,1))+ggtitle("ROC Plot")+labs(x="False Positive Fraction", y="True Positive Fraction") 
+MLBROCplot
+calc_auc(MLBROCplot)
+```
+Area under the curve is .56, meaning that FPR is almost equal to TRR.
+```{R}
+set.seed(1234)
+k=10 #choose number of folds
+
+
+data1<-mlb_as_team_talent[sample(nrow(mlb_as_team_talent)),] #randomly order rows
+folds<-cut(seq(1:nrow(mlb_as_team_talent)),breaks=k,labels=F) #create folds
+
+diags<-NULL
+for(i in 1:k){
+  ## Create training and test sets
+  train<-data1[folds!=i,] 
+  test<-data1[folds==i,]
+  truth<-test$lgid
+  
+  ## Train model on training set
+  mlbglm<-glm(lgid~unadj_pyth+tm_off_talent,data=train,family="binomial")
+  probs<-predict(mlbglm,newdata = test,type="response")
+  
+  ## Test model on test set (save all k results)
+  diags<-rbind(diags,class_diag(probs,truth))
+}
+
+
+apply(diags,2,mean) #average across all k results
+```
+Accuracy (acc), sensitivity (sens), and recall (ppv) based on 10-fold cross validation are shown above.   
+
+### **6. Lasso Model with New 10-fold Cross Validation
+```{R}
+mlb_as_team_talent<-mlb_as_team_talent%>%dplyr::select(-logit,-team_c)
+mlbglmlasso <- glm(lgid ~ -1 +yearid+gameid+gamenum+tm_off_talent+tm_def_talent+tm_pit_talent+mlb_avg_rpg+talent_rspg+talent_rapg+unadj_pyth+timeline_adj+sos+adj_pyth, data = mlb_as_team_talent, family = "binomial")
+x<-model.matrix(mlbglmlasso)
+x<-scale(x)
+y<-as.matrix(mlb_as_team_talent$lgid)
+cv<-cv.glmnet(x,y,family="binomial")
+lasso<-glmnet(x,y,family="binomial",lambda=cv$lambda.1se)
+coef(lasso)
+#10-foldCV
+set.seed(1234)
+k=10 #choose number of folds
+
+
+data1<-mlb_as_team_talent[sample(nrow(mlb_as_team_talent)),] #randomly order rows
+folds<-cut(seq(1:nrow(mlb_as_team_talent)),breaks=k,labels=F) #create folds
+
+diags<-NULL
+for(i in 1:k){
+  ## Create training and test sets
+  train<-data1[folds!=i,] 
+  test<-data1[folds==i,]
+  truth<-test$lgid
+  
+  ## Train model on training set
+  mlbglm<-glm(lgid~tm_pit_talent,data=train,family="binomial")
+  probs<-predict(mlbglm,newdata = test,type="response")
+  
+  ## Test model on test set (save all k results)
+  diags<-rbind(diags,class_diag(probs,truth))
+}
+
+
+apply(diags,2,mean)
+
+```
+
+
+Not all variables were used (no_1_player and no_2_player) becasue the players in these categories were not in the MLB for every all-star game in question. The tm_pit_talent varialbe was retained, and after a 10-fold CV, this model is slightly more accurate than the previous 10 fold CV from part 5 as well as as a slightly higher auc. 
+
+
+```{R, echo=F}
+## DO NOT DELETE THIS BLOCK!
+sessionInfo()
+Sys.time()
+Sys.info()
+```

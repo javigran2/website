@@ -1,0 +1,156 @@
+---
+title: "Project 1-Exploratory Data Analysis"
+author: "SDS348 Fall 2019"
+date: "Due 10/20/19"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r global_options, include=FALSE}
+library(knitr)
+library(tidyverse)
+opts_chunk$set(fig.align="center", fig.height=5, message=FALSE, fig.width=8,tidy.opts=list(width.cutoff=60),tidy=TRUE)
+```
+
+Javier Granados II, jg65347
+
+---
+
+
+#### Introduction 
+
+```{R}
+library(tidyverse)
+library(dplyr)
+library(knitr)
+library(ggplot2)
+install.packages("fivethirtyeight")
+library(fivethirtyeight)
+mlbpt<-mlb_as_play_talent
+mlbtt<-mlb_as_team_talent
+
+```
+
+October, a month for everything Halloween and fall, from scary movies to pumpkin spice lattes. But for baseball fanatics, October means playoffs for Major League Baseball. Every pitch counts, leaving thousands of fans and players holding their breath every time the ball is thrown to home plate. Only the best of the best teams make it to October, with the exception of two- the American and National League All-Star Teams. Known as the Midsummer Classic, MLB's best players represent their respective leagues in a thrilling July game where only Goliaths of baseball can participate in. 
+
+But what if these super teams were actual orginzations that played against other All-Star teams from other years? It'll be a World Series matchup of heavyweights every day! But who would win? Which All-Star team is the best of the best? Baseball Reference and I will try to answer these questions. Using the fivethirtyeight package, I used Baseball Reference's mlb_as_team_talent and mlb_as_play_talent data sets. These sets attempt to find the highest rated All-Star team (the unadj_pyth variable) based on projected team runs produced and allowed (using the Pythogorean Theorum of Baseball Formula), offensive, fielding, and pitching "talent" (postive contributions to runs produced/saved based on these three aspects) for both a team overall and the individual player's contribution based on their respective "talent" as well. In addition, the top two most "talented" players are listed for each All-Star team. I would expect that the highest rated offensive teams and players would associate with the highest team/player ratings since hitters have more opportunities for run contribution, but in baseball, anything can happen.
+
+#### 1. Tidying
+
+```{R}
+untidy<-mlbtt%>%pivot_wider(names_from = "lgid", values_from="yearid")
+untidy
+tidyagain<-untidy%>%pivot_longer(cols= c("AL","NL"), names_to="lgid", values_to="yearid")%>%na.omit
+tidyagain
+```
+
+The data sets were already tidy, so I made the mlbtt data untidy using pivot wider to demonstrate use of this procedure. Then I made it tidy again by using pivot longer while using na.omit to remove the newly formed duplicate columns with a NA in its yearid column.
+
+##### 2. Joining/Merging 
+.
+
+```{R}
+mlbtt%>%inner_join(mlbpt)->innerdata
+glimpse(innerdata)
+        
+```
+Data was performed using an inner join to remove any data that did not have a match to the identification variables, which were yearid, gamenum, gameid, and lgid by default. However, none of the rows were removed since both data sets had these ID variables. Potential problems could be repeated values (ex: unadj_pyth), which will interfere when calculating mean summaries.
+
+##### 3 . Summary Stats
+
+```{R}
+NLRAA<-innerdata%>%filter(lgid=="NL")%>%group_by(yearid)%>%mutate(meanRunsAboveAvg=mean(totper9innasg))
+glimpse(NLRAA)
+ALRAA<-innerdata%>%filter(lgid=="AL")%>%group_by(yearid)%>%mutate(meanRunsAboveAvg=mean(totper9innasg))
+glimpse(ALRAA)
+```
+I first wanted to see the average expected runs above average (totper9innasg) for each team, or, in summary, the average expected runs added by each player on their respective roster, based on each league's history. The NLRAA and ALRAA vectors would help me answer this question for both the National League and American League, respectively. 
+```{R}
+RAAgradient<-innerdata%>%select(yearid,lgid,no_1_player,bbref_id,totper9innasg)%>%group_by(yearid, lgid)%>%arrange(desc(yearid,totper9innasg))
+glimpse(RAAgradient)
+```
+"RAAgradiet" would help me see clearer which players were the best and worst on their respective ASG roster based on the same stat.
+```{R}
+LeagueSumPlayerStats<-innerdata%>%group_by(yearid,lgid)%>%summarize(max(totper9innasg), min(totper9innasg), mean(totper9innasg), sd(totper9innasg), var(totper9innasg), cor(offper9innasg,totper9innasg), cor(defper9innasg,totper9innasg), cor(pitper9innasg,totper9innasg))
+glimpse(LeagueSumPlayerStats)
+```
+LeagueSumPlayerStats helped me summarize the max and min totper9inasg scores, its average,sd, and varience, as well as correlations between runs above average for offense, defense, and pitching. This would help answer how much expected runs the average all star would produce while determining which way of run production (offense, defense, pitching) contributes the most to totper9innasg. As it turned out, offense did correlate most to total run contribution.
+```{R}
+LeagueSumTeamStats<-innerdata%>%group_by(lgid)%>%summarize(max(unadj_pyth), min(unadj_pyth), cor(tm_off_talent,unadj_pyth), cor(tm_pit_talent,unadj_pyth))
+glimpse(LeagueSumTeamStats)
+```
+LeagueSumTeam Stats gave similar stats but to overall talent ratings for all star teams (unadj_pyth).It appears that pictching is more correlated to total talent for NL teams while hitting (offense) contributes more in the AL. This makes sense since the AL has a designated hitter to hit for a pitcher, making an AL team more dependent on hitting for success.
+```{R}
+UniqueUA<-innerdata%>%select(lgid,unadj_pyth)%>%unique(innerdata$unadj_pyth, incomparables= FALSE )
+glimpse(UniqueUA)
+length(unique(mlbtt$unadj_pyth))
+length(UniqueUA$unadj_pyth)       
+```
+ To avoid repeating team talent ratings for visualization, UniqueUA was created. Length tests were created to confirm no values were lost from original data set.  
+
+##### 4. Visualizing (30 pts) Create two effective, polished plots with ggplot. Each plot should map 3+ variables to aesthetics. Each plot should have a title and clean labeling for all mappings. Change at least one default theme element and color for at least one mapping per plot. For at least one plot, add more tick marks (x, y, or both) than are given by default. For at least one plot, use the stat=“summary” function. Supporting paragraph or two (for each plot) describing the relationships/trends that are apparent
+
+
+```{R}
+ggplot(UniqueUA, 
+       aes(x=lgid, y=unadj_pyth))+
+  ggtitle("Average Talent by League")+
+  labs(x="League")+
+  geom_bar(stat="summary", fill="blue")+
+  scale_y_continuous(name="Talent Rating (unadjusted pythagorean)", 
+breaks=seq(0,0.7 ,.05))+theme_get()
+```
+
+In the first plot, we see the average talent score (unadj_pyth) for each league throughout all of the All-Star games. As you can see, the average talent ratings are almost identical when comparing both leagues. This can indicate that talent has been rather equal throughout history in the MLB, making each league just as competitive. 
+
+```{R}
+
+ggplot (innerdata, aes(x=innerdata$yearid,y=innerdata$totper9innasg, color=lgid))+
+  geom_point(stat="summary")+
+  ggtitle("MLB Average Runs per Game per League (lgid)")+
+  labs(x="Year", y="Runs per Game")+theme_classic()
+```
+
+In the second plot, we see the average runs per game scored within each league throughout history. In the earlier years, the AL scored more runs on average than the NL. However, from about 1950 onward, no league definitively scored more runs per game. This also inidicates similar strength of schedules and talent within each league, supporting the first bar graph as well. 
+
+
+##### 5. Dimensionality Reduction-PCA
+
+
+```{R}
+innerdata%>%mutate(is.character(as.factor))
+innerdata1<-innerdata%>%select(24:27)
+MLBnums<-innerdata1%>%select_if(is.numeric)%>%scale
+rownames(MLBnums)<-innerdata$bbref_id
+MLBpca<-princomp(MLBnums)
+names(MLBpca)
+summary(MLBpca, loadings=T)
+eigvalMLB<-MLBpca$sdev^2 
+varprop=round(eigvalMLB/sum(eigvalMLB),2)
+
+ggplot()+geom_bar(aes(y=varprop,x=1:4),stat="identity")+xlab("")+geom_path(aes(y=varprop,x=1:4))+
+  geom_text(aes(x=1:4,y=varprop,label=round(varprop,2)),vjust=1,col="white",size=5)+
+  scale_y_continuous(breaks=seq(0,.6,.2),labels = scales::percent)+
+  scale_x_continuous(breaks=1:10)+ggtitle("Elbow Test for PC Values")+labs(x="PC Values", y="Variance Proportion")
+```
+2 Values were chosen based on the "elbow" method.
+```{R}
+eigvalMLB
+MLBpca$loadings[1:4,1:4]%>%as.data.frame%>%rownames_to_column%>%
+ggplot()+geom_hline(aes(yintercept=0),lty=2)+
+  geom_vline(aes(xintercept=0),lty=2)+ylab("PC2")+xlab("PC1")+
+  geom_segment(aes(x=0,y=0,xend=Comp.1,yend=Comp.2),arrow=arrow(),col="red")+
+  geom_label(aes(x=Comp.1*1.1,y=Comp.2*1.1,label=rowname))+ggtitle("PCA Plot")
+```
+
+A PCA was created to compare expected runs added above average offensively, defensively, pitching-wise, and overall. After cleaning, centering, scaling data and calculating/determining PC values (2 was chosen using the "elbow" method), it appears that pitching and defense runs contributions are closely correlated whereas offense and total are more closely correrelated. This makes sense since pitching can also be considered defense since the end goal for defense at positions and pitching is the same-prevent runs for the other team. In addition, total runs contributed is more grouped to offense since it is easier to contribute to run contribution as a batter whose job is to score runs. 
+
+
+
+```{R, echo=F}
+## DO NOT DELETE THIS BLOCK!
+sessionInfo()
+Sys.time()
+Sys.info()
+```
