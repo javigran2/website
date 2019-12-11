@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Javier Granados II" />
+    <meta name="description" content="Describe your website">
+    <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico">
+    <title>Project 1-Exploratory Data Analysis</title>
+    <meta name="generator" content="Hugo 0.60.1" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="/blog/">BLOG</a></li>
+        
+        <li><a href="/projects/">PROJECTS</a></li>
+        
+        <li><a href="/myresume.pdf">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="/project1/">Project 1-Exploratory Data Analysis</a></strong>
+          </h3>
+        </div>
+        <div class="blog-title">
+          <h4>
+          October 20, 2019
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+
+
+<p>Javier Granados II, jg65347</p>
+<hr />
+<div id="introduction" class="section level4">
+<h4>Introduction</h4>
+<pre class="r"><code>library(tidyverse)
+library(dplyr)
+library(knitr)
+library(ggplot2)
+library(fivethirtyeight)
+mlbpt &lt;- mlb_as_play_talent
+mlbtt &lt;- mlb_as_team_talent</code></pre>
+<p>October, a month for everything Halloween and fall, from scary movies to pumpkin spice lattes. But for baseball fanatics, October means playoffs for Major League Baseball. Every pitch counts, leaving thousands of fans and players holding their breath every time the ball is thrown to home plate. Only the best of the best teams make it to October, with the exception of two- the American and National League All-Star Teams. Known as the Midsummer Classic, MLB’s best players represent their respective leagues in a thrilling July game where only Goliaths of baseball can participate in.</p>
+<p>But what if these super teams were actual orginzations that played against other All-Star teams from other years? It’ll be a World Series matchup of heavyweights every day! But who would win? Which All-Star team is the best of the best? Baseball Reference and I will try to answer these questions. Using the fivethirtyeight package, I used Baseball Reference’s mlb_as_team_talent and mlb_as_play_talent data sets. These sets attempt to find the highest rated All-Star team (the unadj_pyth variable) based on projected team runs produced and allowed (using the Pythogorean Theorum of Baseball Formula), offensive, fielding, and pitching “talent” (postive contributions to runs produced/saved based on these three aspects) for both a team overall and the individual player’s contribution based on their respective “talent” as well. In addition, the top two most “talented” players are listed for each All-Star team. I would expect that the highest rated offensive teams and players would associate with the highest team/player ratings since hitters have more opportunities for run contribution, but in baseball, anything can happen.</p>
+</div>
+<div id="tidying" class="section level4">
+<h4>1. Tidying</h4>
+<pre class="r"><code>untidy &lt;- mlbtt %&gt;% pivot_wider(names_from = &quot;lgid&quot;, values_from = &quot;yearid&quot;)
+untidy</code></pre>
+<pre><code>## # A tibble: 172 x 16
+##    gamenum gameid tm_off_talent tm_def_talent tm_pit_talent mlb_avg_rpg
+##      &lt;int&gt; &lt;chr&gt;          &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;       &lt;dbl&gt;
+##  1       0 NLS19~         1.33         0.131          0.721        3.99
+##  2       0 NLS19~         1.05         0.356          0.677        4.41
+##  3       0 NLS19~         1.78         0.117          0.628        4.91
+##  4       0 ALS19~         1.47         0.0908         0.617        4.49
+##  5       0 NLS19~         1.36         0.139          0.673        4.68
+##  6       0 NLS19~         1.18         0.133          0.550        4.04
+##  7       0 ALS19~         0.963        0.184          0.583        4.01
+##  8       0 NLS19~         1.00         0.126          0.498        3.69
+##  9       0 ALS19~         1.25         0.109          0.717        4.77
+## 10       0 ALS19~         1.41         0.0508         0.668        4.77
+## # ... with 162 more rows, and 10 more variables: talent_rspg &lt;dbl&gt;,
+## #   talent_rapg &lt;dbl&gt;, unadj_pyth &lt;dbl&gt;, timeline_adj &lt;dbl&gt;, sos &lt;dbl&gt;,
+## #   adj_pyth &lt;dbl&gt;, no_1_player &lt;chr&gt;, no_2_player &lt;chr&gt;, NL &lt;int&gt;,
+## #   AL &lt;int&gt;</code></pre>
+<pre class="r"><code>tidyagain &lt;- untidy %&gt;% pivot_longer(cols = c(&quot;AL&quot;, &quot;NL&quot;), names_to = &quot;lgid&quot;, 
+    values_to = &quot;yearid&quot;) %&gt;% na.omit
+tidyagain</code></pre>
+<pre><code>## # A tibble: 172 x 16
+##    gamenum gameid tm_off_talent tm_def_talent tm_pit_talent mlb_avg_rpg
+##      &lt;int&gt; &lt;chr&gt;          &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;       &lt;dbl&gt;
+##  1       0 NLS19~         1.33         0.131          0.721        3.99
+##  2       0 NLS19~         1.05         0.356          0.677        4.41
+##  3       0 NLS19~         1.78         0.117          0.628        4.91
+##  4       0 ALS19~         1.47         0.0908         0.617        4.49
+##  5       0 NLS19~         1.36         0.139          0.673        4.68
+##  6       0 NLS19~         1.18         0.133          0.550        4.04
+##  7       0 ALS19~         0.963        0.184          0.583        4.01
+##  8       0 NLS19~         1.00         0.126          0.498        3.69
+##  9       0 ALS19~         1.25         0.109          0.717        4.77
+## 10       0 ALS19~         1.41         0.0508         0.668        4.77
+## # ... with 162 more rows, and 10 more variables: talent_rspg &lt;dbl&gt;,
+## #   talent_rapg &lt;dbl&gt;, unadj_pyth &lt;dbl&gt;, timeline_adj &lt;dbl&gt;, sos &lt;dbl&gt;,
+## #   adj_pyth &lt;dbl&gt;, no_1_player &lt;chr&gt;, no_2_player &lt;chr&gt;, lgid &lt;chr&gt;,
+## #   yearid &lt;int&gt;</code></pre>
+<p>The data sets were already tidy, so I made the mlbtt data untidy using pivot wider to demonstrate use of this procedure. Then I made it tidy again by using pivot longer while using na.omit to remove the newly formed duplicate columns with a NA in its yearid column.</p>
+<div id="joiningmerging" class="section level5">
+<h5>2. Joining/Merging</h5>
+<p>.</p>
+<pre class="r"><code>innerdata &lt;- mlbtt %&gt;% inner_join(mlbpt)
+glimpse(innerdata)</code></pre>
+<pre><code>## Observations: 3,930
+## Variables: 27
+## $ yearid        &lt;int&gt; 1966, 1966, 1966, 1966, 1966, 1966, 1966, 1966, ...
+## $ gamenum       &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...
+## $ gameid        &lt;chr&gt; &quot;NLS196607120&quot;, &quot;NLS196607120&quot;, &quot;NLS196607120&quot;, ...
+## $ lgid          &lt;chr&gt; &quot;NL&quot;, &quot;NL&quot;, &quot;NL&quot;, &quot;NL&quot;, &quot;NL&quot;, &quot;NL&quot;, &quot;NL&quot;, &quot;NL&quot;, ...
+## $ tm_off_talent &lt;dbl&gt; 1.332265, 1.332265, 1.332265, 1.332265, 1.332265...
+## $ tm_def_talent &lt;dbl&gt; 0.1309911, 0.1309911, 0.1309911, 0.1309911, 0.13...
+## $ tm_pit_talent &lt;dbl&gt; 0.7205082, 0.7205082, 0.7205082, 0.7205082, 0.72...
+## $ mlb_avg_rpg   &lt;dbl&gt; 3.99, 3.99, 3.99, 3.99, 3.99, 3.99, 3.99, 3.99, ...
+## $ talent_rspg   &lt;dbl&gt; 5.322265, 5.322265, 5.322265, 5.322265, 5.322265...
+## $ talent_rapg   &lt;dbl&gt; 3.138501, 3.138501, 3.138501, 3.138501, 3.138501...
+## $ unadj_pyth    &lt;dbl&gt; 0.7244256, 0.7244256, 0.7244256, 0.7244256, 0.72...
+## $ timeline_adj  &lt;dbl&gt; 0.8606635, 0.8606635, 0.8606635, 0.8606635, 0.86...
+## $ sos           &lt;dbl&gt; 0.4303318, 0.4303318, 0.4303318, 0.4303318, 0.43...
+## $ adj_pyth      &lt;dbl&gt; 0.6650818, 0.6650818, 0.6650818, 0.6650818, 0.66...
+## $ no_1_player   &lt;chr&gt; &quot;mayswi01&quot;, &quot;mayswi01&quot;, &quot;mayswi01&quot;, &quot;mayswi01&quot;, ...
+## $ no_2_player   &lt;chr&gt; &quot;santoro01&quot;, &quot;santoro01&quot;, &quot;santoro01&quot;, &quot;santoro0...
+## $ bbref_id      &lt;chr&gt; &quot;mayswi01&quot;, &quot;santoro01&quot;, &quot;koufasa01&quot;, &quot;maricju01...
+## $ startingpos   &lt;chr&gt; &quot;8&quot;, &quot;5&quot;, &quot;1&quot;, &quot;NULL&quot;, &quot;7&quot;, &quot;9&quot;, &quot;NULL&quot;, &quot;2&quot;, &quot;3...
+## $ off600        &lt;dbl&gt; 39.9857459, 32.5178152, 0.0000000, 0.0000000, 30...
+## $ def600        &lt;dbl&gt; 11.2012755, 6.2973874, 0.0000000, 0.0000000, 1.1...
+## $ pitch200      &lt;dbl&gt; 0.000000, 0.000000, 19.611573, 19.437649, 0.0000...
+## $ asg_pa        &lt;int&gt; 4, 4, 0, 0, 4, 4, 0, 3, 4, 1, 2, 0, 1, 1, 1, 1, ...
+## $ asg_ip        &lt;dbl&gt; 0, 0, 3, 3, 0, 0, 2, 0, 0, 0, 0, 2, 0, 0, 0, 0, ...
+## $ offper9innasg &lt;dbl&gt; 0.274187972, 0.222979304, 0.000000000, 0.0000000...
+## $ defper9innasg &lt;dbl&gt; 0.076808746, 0.043182085, 0.000000000, 0.0000000...
+## $ pitper9innasg &lt;dbl&gt; 0.00000000, 0.00000000, 0.26475624, 0.26240825, ...
+## $ totper9innasg &lt;dbl&gt; 0.350996718, 0.266161389, 0.264756235, 0.2624082...</code></pre>
+<p>Data was performed using an inner join to remove any data that did not have a match to the identification variables, which were yearid, gamenum, gameid, and lgid by default. However, none of the rows were removed since both data sets had these ID variables. Potential problems could be repeated values (ex: unadj_pyth), which will interfere when calculating mean summaries.</p>
+</div>
+<div id="summary-stats" class="section level5">
+<h5>3 . Summary Stats</h5>
+<pre class="r"><code>NLRAA &lt;- innerdata %&gt;% filter(lgid == &quot;NL&quot;) %&gt;% group_by(yearid) %&gt;% 
+    mutate(meanRunsAboveAvg = mean(totper9innasg))
+glimpse(NLRAA)</code></pre>
+<pre><code>## Observations: 1,999
+## Variables: 28
+## Groups: yearid [82]
+## $ yearid           &lt;int&gt; 1966, 1966, 1966, 1966, 1966, 1966, 1966, 196...
+## $ gamenum          &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...
+## $ gameid           &lt;chr&gt; &quot;NLS196607120&quot;, &quot;NLS196607120&quot;, &quot;NLS196607120...
+## $ lgid             &lt;chr&gt; &quot;NL&quot;, &quot;NL&quot;, &quot;NL&quot;, &quot;NL&quot;, &quot;NL&quot;, &quot;NL&quot;, &quot;NL&quot;, &quot;NL...
+## $ tm_off_talent    &lt;dbl&gt; 1.332265, 1.332265, 1.332265, 1.332265, 1.332...
+## $ tm_def_talent    &lt;dbl&gt; 0.13099106, 0.13099106, 0.13099106, 0.1309910...
+## $ tm_pit_talent    &lt;dbl&gt; 0.7205082, 0.7205082, 0.7205082, 0.7205082, 0...
+## $ mlb_avg_rpg      &lt;dbl&gt; 3.99, 3.99, 3.99, 3.99, 3.99, 3.99, 3.99, 3.9...
+## $ talent_rspg      &lt;dbl&gt; 5.322265, 5.322265, 5.322265, 5.322265, 5.322...
+## $ talent_rapg      &lt;dbl&gt; 3.138501, 3.138501, 3.138501, 3.138501, 3.138...
+## $ unadj_pyth       &lt;dbl&gt; 0.7244256, 0.7244256, 0.7244256, 0.7244256, 0...
+## $ timeline_adj     &lt;dbl&gt; 0.8606635, 0.8606635, 0.8606635, 0.8606635, 0...
+## $ sos              &lt;dbl&gt; 0.4303318, 0.4303318, 0.4303318, 0.4303318, 0...
+## $ adj_pyth         &lt;dbl&gt; 0.6650818, 0.6650818, 0.6650818, 0.6650818, 0...
+## $ no_1_player      &lt;chr&gt; &quot;mayswi01&quot;, &quot;mayswi01&quot;, &quot;mayswi01&quot;, &quot;mayswi01...
+## $ no_2_player      &lt;chr&gt; &quot;santoro01&quot;, &quot;santoro01&quot;, &quot;santoro01&quot;, &quot;santo...
+## $ bbref_id         &lt;chr&gt; &quot;mayswi01&quot;, &quot;santoro01&quot;, &quot;koufasa01&quot;, &quot;maricj...
+## $ startingpos      &lt;chr&gt; &quot;8&quot;, &quot;5&quot;, &quot;1&quot;, &quot;NULL&quot;, &quot;7&quot;, &quot;9&quot;, &quot;NULL&quot;, &quot;2&quot;,...
+## $ off600           &lt;dbl&gt; 39.9857459, 32.5178152, 0.0000000, 0.0000000,...
+## $ def600           &lt;dbl&gt; 11.2012755, 6.2973874, 0.0000000, 0.0000000, ...
+## $ pitch200         &lt;dbl&gt; 0.000000, 0.000000, 19.611573, 19.437649, 0.0...
+## $ asg_pa           &lt;int&gt; 4, 4, 0, 0, 4, 4, 0, 3, 4, 1, 2, 0, 1, 1, 1, ...
+## $ asg_ip           &lt;dbl&gt; 0, 0, 3, 3, 0, 0, 2, 0, 0, 0, 0, 2, 0, 0, 0, ...
+## $ offper9innasg    &lt;dbl&gt; 0.274187972, 0.222979304, 0.000000000, 0.0000...
+## $ defper9innasg    &lt;dbl&gt; 0.076808746, 0.043182085, 0.000000000, 0.0000...
+## $ pitper9innasg    &lt;dbl&gt; 0.00000000, 0.00000000, 0.26475624, 0.2624082...
+## $ totper9innasg    &lt;dbl&gt; 0.350996718, 0.266161389, 0.264756235, 0.2624...
+## $ meanRunsAboveAvg &lt;dbl&gt; 0.11493497, 0.11493497, 0.11493497, 0.1149349...</code></pre>
+<pre class="r"><code>ALRAA &lt;- innerdata %&gt;% filter(lgid == &quot;AL&quot;) %&gt;% group_by(yearid) %&gt;% 
+    mutate(meanRunsAboveAvg = mean(totper9innasg))
+glimpse(ALRAA)</code></pre>
+<pre><code>## Observations: 1,931
+## Variables: 28
+## Groups: yearid [82]
+## $ yearid           &lt;int&gt; 1986, 1986, 1986, 1986, 1986, 1986, 1986, 198...
+## $ gamenum          &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...
+## $ gameid           &lt;chr&gt; &quot;NLS198607150&quot;, &quot;NLS198607150&quot;, &quot;NLS198607150...
+## $ lgid             &lt;chr&gt; &quot;AL&quot;, &quot;AL&quot;, &quot;AL&quot;, &quot;AL&quot;, &quot;AL&quot;, &quot;AL&quot;, &quot;AL&quot;, &quot;AL...
+## $ tm_off_talent    &lt;dbl&gt; 1.049056, 1.049056, 1.049056, 1.049056, 1.049...
+## $ tm_def_talent    &lt;dbl&gt; 0.3562402, 0.3562402, 0.3562402, 0.3562402, 0...
+## $ tm_pit_talent    &lt;dbl&gt; 0.6774312, 0.6774312, 0.6774312, 0.6774312, 0...
+## $ mlb_avg_rpg      &lt;dbl&gt; 4.41, 4.41, 4.41, 4.41, 4.41, 4.41, 4.41, 4.4...
+## $ talent_rspg      &lt;dbl&gt; 5.459056, 5.459056, 5.459056, 5.459056, 5.459...
+## $ talent_rapg      &lt;dbl&gt; 3.376329, 3.376329, 3.376329, 3.376329, 3.376...
+## $ unadj_pyth       &lt;dbl&gt; 0.7066753, 0.7066753, 0.7066753, 0.7066753, 0...
+## $ timeline_adj     &lt;dbl&gt; 0.9175355, 0.9175355, 0.9175355, 0.9175355, 0...
+## $ sos              &lt;dbl&gt; 0.4587678, 0.4587678, 0.4587678, 0.4587678, 0...
+## $ adj_pyth         &lt;dbl&gt; 0.6712815, 0.6712815, 0.6712815, 0.6712815, 0...
+## $ no_1_player      &lt;chr&gt; &quot;higuete01&quot;, &quot;higuete01&quot;, &quot;higuete01&quot;, &quot;higue...
+## $ no_2_player      &lt;chr&gt; &quot;clemero02&quot;, &quot;clemero02&quot;, &quot;clemero02&quot;, &quot;cleme...
+## $ bbref_id         &lt;chr&gt; &quot;higuete01&quot;, &quot;clemero02&quot;, &quot;ripkeca01&quot;, &quot;hende...
+## $ startingpos      &lt;chr&gt; &quot;NULL&quot;, &quot;1&quot;, &quot;6&quot;, &quot;7&quot;, &quot;5&quot;, &quot;NULL&quot;, &quot;NULL&quot;, &quot;...
+## $ off600           &lt;dbl&gt; 0.000000, 0.000000, 18.296089, 36.024529, 32....
+## $ def600           &lt;dbl&gt; 0.000000, 0.000000, 16.289006, 4.705641, 7.16...
+## $ pitch200         &lt;dbl&gt; 20.015163, 18.015540, 0.000000, 0.000000, 0.0...
+## $ asg_pa           &lt;int&gt; 0, 0, 4, 3, 3, 3, 3, 4, 3, 2, 0, 0, 2, 1, 1, ...
+## $ asg_ip           &lt;dbl&gt; 3.000, 3.000, 0.000, 0.000, 0.000, 0.000, 0.0...
+## $ offper9innasg    &lt;dbl&gt; 0.000000000, 0.000000000, 0.133062468, 0.1964...
+## $ defper9innasg    &lt;dbl&gt; 0.000000000, 0.000000000, 0.118465501, 0.0256...
+## $ pitper9innasg    &lt;dbl&gt; 0.30019409, 0.27020309, 0.00000000, 0.0000000...
+## $ totper9innasg    &lt;dbl&gt; 0.300194091, 0.270203085, 0.251527969, 0.2221...
+## $ meanRunsAboveAvg &lt;dbl&gt; 0.09466943, 0.09466943, 0.09466943, 0.0946694...</code></pre>
+<p>I first wanted to see the average expected runs above average (totper9innasg) for each team, or, in summary, the average expected runs added by each player on their respective roster, based on each league’s history. The NLRAA and ALRAA vectors would help me answer this question for both the National League and American League, respectively.</p>
+<pre class="r"><code>RAAgradient &lt;- innerdata %&gt;% select(yearid, lgid, no_1_player, 
+    bbref_id, totper9innasg) %&gt;% group_by(yearid, lgid) %&gt;% arrange(desc(yearid, 
+    totper9innasg))
+glimpse(RAAgradient)</code></pre>
+<pre><code>## Observations: 3,930
+## Variables: 5
+## Groups: yearid, lgid [164]
+## $ yearid        &lt;int&gt; 2015, 2015, 2015, 2015, 2015, 2015, 2015, 2015, ...
+## $ lgid          &lt;chr&gt; &quot;NL&quot;, &quot;NL&quot;, &quot;NL&quot;, &quot;NL&quot;, &quot;NL&quot;, &quot;NL&quot;, &quot;NL&quot;, &quot;NL&quot;, ...
+## $ no_1_player   &lt;chr&gt; &quot;goldspa01&quot;, &quot;goldspa01&quot;, &quot;goldspa01&quot;, &quot;goldspa0...
+## $ bbref_id      &lt;chr&gt; &quot;goldspa01&quot;, &quot;mccutan01&quot;, &quot;harpebr03&quot;, &quot;greinza0...
+## $ totper9innasg &lt;dbl&gt; 0.18319255, 0.16753755, 0.16154212, 0.15645611, ...</code></pre>
+<p>“RAAgradiet” would help me see clearer which players were the best and worst on their respective ASG roster based on the same stat.</p>
+<pre class="r"><code>LeagueSumPlayerStats &lt;- innerdata %&gt;% group_by(yearid, lgid) %&gt;% 
+    summarize(max(totper9innasg), min(totper9innasg), mean(totper9innasg), 
+        sd(totper9innasg), var(totper9innasg), cor(offper9innasg, 
+            totper9innasg), cor(defper9innasg, totper9innasg), 
+        cor(pitper9innasg, totper9innasg))
+glimpse(LeagueSumPlayerStats)</code></pre>
+<pre><code>## Observations: 164
+## Variables: 10
+## Groups: yearid [82]
+## $ yearid                              &lt;int&gt; 1933, 1933, 1934, 1934, 19...
+## $ lgid                                &lt;chr&gt; &quot;AL&quot;, &quot;NL&quot;, &quot;AL&quot;, &quot;NL&quot;, &quot;A...
+## $ `max(totper9innasg)`                &lt;dbl&gt; 0.3371259, 0.2879526, 0.43...
+## $ `min(totper9innasg)`                &lt;dbl&gt; -0.037319424, -0.028570458...
+## $ `mean(totper9innasg)`               &lt;dbl&gt; 0.14432045, 0.07551441, 0....
+## $ `sd(totper9innasg)`                 &lt;dbl&gt; 0.12410809, 0.10016261, 0....
+## $ `var(totper9innasg)`                &lt;dbl&gt; 0.015402818, 0.010032549, ...
+## $ `cor(offper9innasg, totper9innasg)` &lt;dbl&gt; 0.7199285, 0.6238891, 0.59...
+## $ `cor(defper9innasg, totper9innasg)` &lt;dbl&gt; -0.134213855, -0.391618684...
+## $ `cor(pitper9innasg, totper9innasg)` &lt;dbl&gt; 0.36052479, 0.62292754, 0....</code></pre>
+<p>LeagueSumPlayerStats helped me summarize the max and min totper9inasg scores, its average,sd, and varience, as well as correlations between runs above average for offense, defense, and pitching. This would help answer how much expected runs the average all star would produce while determining which way of run production (offense, defense, pitching) contributes the most to totper9innasg. As it turned out, offense did correlate most to total run contribution.</p>
+<pre class="r"><code>LeagueSumTeamStats &lt;- innerdata %&gt;% group_by(lgid) %&gt;% summarize(max(unadj_pyth), 
+    min(unadj_pyth), cor(tm_off_talent, unadj_pyth), cor(tm_pit_talent, 
+        unadj_pyth))
+glimpse(LeagueSumTeamStats)</code></pre>
+<pre><code>## Observations: 2
+## Variables: 5
+## $ lgid                             &lt;chr&gt; &quot;AL&quot;, &quot;NL&quot;
+## $ `max(unadj_pyth)`                &lt;dbl&gt; 0.7066753, 0.7244256
+## $ `min(unadj_pyth)`                &lt;dbl&gt; 0.5701006, 0.5694983
+## $ `cor(tm_off_talent, unadj_pyth)` &lt;dbl&gt; 0.7333854, 0.6759973
+## $ `cor(tm_pit_talent, unadj_pyth)` &lt;dbl&gt; 0.6526382, 0.6812505</code></pre>
+<p>LeagueSumTeam Stats gave similar stats but to overall talent ratings for all star teams (unadj_pyth).It appears that pictching is more correlated to total talent for NL teams while hitting (offense) contributes more in the AL. This makes sense since the AL has a designated hitter to hit for a pitcher, making an AL team more dependent on hitting for success.</p>
+<pre class="r"><code>UniqueUA &lt;- innerdata %&gt;% select(lgid, unadj_pyth) %&gt;% unique(innerdata$unadj_pyth, 
+    incomparables = FALSE)
+glimpse(UniqueUA)</code></pre>
+<pre><code>## Observations: 172
+## Variables: 2
+## $ lgid       &lt;chr&gt; &quot;NL&quot;, &quot;AL&quot;, &quot;AL&quot;, &quot;AL&quot;, &quot;AL&quot;, &quot;AL&quot;, &quot;AL&quot;, &quot;AL&quot;, &quot;AL...
+## $ unadj_pyth &lt;dbl&gt; 0.7244256, 0.7066753, 0.7040312, 0.6969522, 0.69310...</code></pre>
+<pre class="r"><code>length(unique(mlbtt$unadj_pyth))</code></pre>
+<pre><code>## [1] 172</code></pre>
+<pre class="r"><code>length(UniqueUA$unadj_pyth)</code></pre>
+<pre><code>## [1] 172</code></pre>
+<p>To avoid repeating team talent ratings for visualization, UniqueUA was created. Length tests were created to confirm no values were lost from original data set.</p>
+</div>
+<div id="visualizing-30-pts-create-two-effective-polished-plots-with-ggplot.-each-plot-should-map-3-variables-to-aesthetics.-each-plot-should-have-a-title-and-clean-labeling-for-all-mappings.-change-at-least-one-default-theme-element-and-color-for-at-least-one-mapping-per-plot.-for-at-least-one-plot-add-more-tick-marks-x-y-or-both-than-are-given-by-default.-for-at-least-one-plot-use-the-statsummary-function.-supporting-paragraph-or-two-for-each-plot-describing-the-relationshipstrends-that-are-apparent" class="section level5">
+<h5>4. Visualizing (30 pts) Create two effective, polished plots with ggplot. Each plot should map 3+ variables to aesthetics. Each plot should have a title and clean labeling for all mappings. Change at least one default theme element and color for at least one mapping per plot. For at least one plot, add more tick marks (x, y, or both) than are given by default. For at least one plot, use the stat=“summary” function. Supporting paragraph or two (for each plot) describing the relationships/trends that are apparent</h5>
+<pre class="r"><code>ggplot(UniqueUA, aes(x = lgid, y = unadj_pyth)) + ggtitle(&quot;Average Talent by League&quot;) + 
+    labs(x = &quot;League&quot;) + geom_bar(stat = &quot;summary&quot;, fill = &quot;blue&quot;) + 
+    scale_y_continuous(name = &quot;Talent Rating (unadjusted pythagorean)&quot;, 
+        breaks = seq(0, 0.7, 0.05)) + theme_get()</code></pre>
+<p><img src="/Project1_files/figure-html/unnamed-chunk-9-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>In the first plot, we see the average talent score (unadj_pyth) for each league throughout all of the All-Star games. As you can see, the average talent ratings are almost identical when comparing both leagues. This can indicate that talent has been rather equal throughout history in the MLB, making each league just as competitive.</p>
+<pre class="r"><code>ggplot(innerdata, aes(x = innerdata$yearid, y = innerdata$totper9innasg, 
+    color = lgid)) + geom_point(stat = &quot;summary&quot;) + ggtitle(&quot;MLB Average Runs per Game per League (lgid)&quot;) + 
+    labs(x = &quot;Year&quot;, y = &quot;Runs per Game&quot;) + theme_classic()</code></pre>
+<p><img src="/Project1_files/figure-html/unnamed-chunk-10-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>In the second plot, we see the average runs per game scored within each league throughout history. In the earlier years, the AL scored more runs on average than the NL. However, from about 1950 onward, no league definitively scored more runs per game. This also inidicates similar strength of schedules and talent within each league, supporting the first bar graph as well.</p>
+</div>
+<div id="dimensionality-reduction-pca" class="section level5">
+<h5>5. Dimensionality Reduction-PCA</h5>
+<pre class="r"><code>innerdata %&gt;% mutate(is.character(as.factor))</code></pre>
+<pre><code>## # A tibble: 3,930 x 28
+##    yearid gamenum gameid lgid  tm_off_talent tm_def_talent tm_pit_talent
+##     &lt;int&gt;   &lt;int&gt; &lt;chr&gt;  &lt;chr&gt;         &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;
+##  1   1966       0 NLS19~ NL             1.33         0.131         0.721
+##  2   1966       0 NLS19~ NL             1.33         0.131         0.721
+##  3   1966       0 NLS19~ NL             1.33         0.131         0.721
+##  4   1966       0 NLS19~ NL             1.33         0.131         0.721
+##  5   1966       0 NLS19~ NL             1.33         0.131         0.721
+##  6   1966       0 NLS19~ NL             1.33         0.131         0.721
+##  7   1966       0 NLS19~ NL             1.33         0.131         0.721
+##  8   1966       0 NLS19~ NL             1.33         0.131         0.721
+##  9   1966       0 NLS19~ NL             1.33         0.131         0.721
+## 10   1966       0 NLS19~ NL             1.33         0.131         0.721
+## # ... with 3,920 more rows, and 21 more variables: mlb_avg_rpg &lt;dbl&gt;,
+## #   talent_rspg &lt;dbl&gt;, talent_rapg &lt;dbl&gt;, unadj_pyth &lt;dbl&gt;,
+## #   timeline_adj &lt;dbl&gt;, sos &lt;dbl&gt;, adj_pyth &lt;dbl&gt;, no_1_player &lt;chr&gt;,
+## #   no_2_player &lt;chr&gt;, bbref_id &lt;chr&gt;, startingpos &lt;chr&gt;, off600 &lt;dbl&gt;,
+## #   def600 &lt;dbl&gt;, pitch200 &lt;dbl&gt;, asg_pa &lt;int&gt;, asg_ip &lt;dbl&gt;,
+## #   offper9innasg &lt;dbl&gt;, defper9innasg &lt;dbl&gt;, pitper9innasg &lt;dbl&gt;,
+## #   totper9innasg &lt;dbl&gt;, `is.character(as.factor)` &lt;lgl&gt;</code></pre>
+<pre class="r"><code>innerdata1 &lt;- innerdata %&gt;% select(24:27)
+MLBnums &lt;- innerdata1 %&gt;% select_if(is.numeric) %&gt;% scale
+rownames(MLBnums) &lt;- innerdata$bbref_id
+MLBpca &lt;- princomp(MLBnums)
+names(MLBpca)</code></pre>
+<pre><code>## [1] &quot;sdev&quot;     &quot;loadings&quot; &quot;center&quot;   &quot;scale&quot;    &quot;n.obs&quot;    &quot;scores&quot;  
+## [7] &quot;call&quot;</code></pre>
+<pre class="r"><code>summary(MLBpca, loadings = T)</code></pre>
+<pre><code>## Importance of components:
+##                           Comp.1    Comp.2    Comp.3       Comp.4
+## Standard deviation     1.3361589 1.0833434 1.0198179 8.024521e-08
+## Proportion of Variance 0.4464438 0.2934829 0.2600733 1.610233e-15
+## Cumulative Proportion  0.4464438 0.7399267 1.0000000 1.000000e+00
+## 
+## Loadings:
+##               Comp.1 Comp.2 Comp.3 Comp.4
+## offper9innasg  0.660  0.423  0.110  0.611
+## defper9innasg  0.101 -0.252 -0.934  0.233
+## pitper9innasg  0.136 -0.850  0.339  0.380
+## totper9innasg  0.732 -0.188        -0.654</code></pre>
+<pre class="r"><code>eigvalMLB &lt;- MLBpca$sdev^2
+varprop = round(eigvalMLB/sum(eigvalMLB), 2)
+
+ggplot() + geom_bar(aes(y = varprop, x = 1:4), stat = &quot;identity&quot;) + 
+    xlab(&quot;&quot;) + geom_path(aes(y = varprop, x = 1:4)) + geom_text(aes(x = 1:4, 
+    y = varprop, label = round(varprop, 2)), vjust = 1, col = &quot;white&quot;, 
+    size = 5) + scale_y_continuous(breaks = seq(0, 0.6, 0.2), 
+    labels = scales::percent) + scale_x_continuous(breaks = 1:10) + 
+    ggtitle(&quot;Elbow Test for PC Values&quot;) + labs(x = &quot;PC Values&quot;, 
+    y = &quot;Variance Proportion&quot;)</code></pre>
+<p><img src="/Project1_files/figure-html/unnamed-chunk-11-1.png" width="768" style="display: block; margin: auto;" />
+2 Values were chosen based on the “elbow” method.</p>
+<pre class="r"><code>eigvalMLB</code></pre>
+<pre><code>##       Comp.1       Comp.2       Comp.3       Comp.4 
+## 1.785321e+00 1.173633e+00 1.040029e+00 6.439294e-15</code></pre>
+<pre class="r"><code>MLBpca$loadings[1:4, 1:4] %&gt;% as.data.frame %&gt;% rownames_to_column %&gt;% 
+    ggplot() + geom_hline(aes(yintercept = 0), lty = 2) + geom_vline(aes(xintercept = 0), 
+    lty = 2) + ylab(&quot;PC2&quot;) + xlab(&quot;PC1&quot;) + geom_segment(aes(x = 0, 
+    y = 0, xend = Comp.1, yend = Comp.2), arrow = arrow(), col = &quot;red&quot;) + 
+    geom_label(aes(x = Comp.1 * 1.1, y = Comp.2 * 1.1, label = rowname)) + 
+    ggtitle(&quot;PCA Plot&quot;)</code></pre>
+<p><img src="/Project1_files/figure-html/unnamed-chunk-12-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>A PCA was created to compare expected runs added above average offensively, defensively, pitching-wise, and overall. After cleaning, centering, scaling data and calculating/determining PC values (2 was chosen using the “elbow” method), it appears that pitching and defense runs contributions are closely correlated whereas offense and total are more closely correrelated. This makes sense since pitching can also be considered defense since the end goal for defense at positions and pitching is the same-prevent runs for the other team. In addition, total runs contributed is more grouped to offense since it is easier to contribute to run contribution as a batter whose job is to score runs.</p>
+<pre><code>## R version 3.6.1 (2019-07-05)
+## Platform: x86_64-w64-mingw32/x64 (64-bit)
+## Running under: Windows 10 x64 (build 18362)
+## 
+## Matrix products: default
+## 
+## locale:
+## [1] LC_COLLATE=English_United States.1252 
+## [2] LC_CTYPE=English_United States.1252   
+## [3] LC_MONETARY=English_United States.1252
+## [4] LC_NUMERIC=C                          
+## [5] LC_TIME=English_United States.1252    
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+##  [1] fivethirtyeight_0.5.0 forcats_0.4.0         stringr_1.4.0        
+##  [4] dplyr_0.8.3           purrr_0.3.2           readr_1.3.1          
+##  [7] tidyr_1.0.0           tibble_2.1.3          ggplot2_3.2.1        
+## [10] tidyverse_1.2.1       knitr_1.25           
+## 
+## loaded via a namespace (and not attached):
+##  [1] tidyselect_0.2.5 xfun_0.10        haven_2.1.1      lattice_0.20-38 
+##  [5] colorspace_1.4-1 vctrs_0.2.0      generics_0.0.2   htmltools_0.3.6 
+##  [9] yaml_2.2.0       utf8_1.1.4       rlang_0.4.0      pillar_1.4.2    
+## [13] glue_1.3.1       withr_2.1.2      modelr_0.1.5     readxl_1.3.1    
+## [17] lifecycle_0.1.0  munsell_0.5.0    blogdown_0.17    gtable_0.3.0    
+## [21] cellranger_1.1.0 rvest_0.3.4      evaluate_0.14    labeling_0.3    
+## [25] fansi_0.4.0      broom_0.5.2      Rcpp_1.0.2       scales_1.0.0    
+## [29] backports_1.1.5  formatR_1.7      jsonlite_1.6     hms_0.5.1       
+## [33] digest_0.6.21    stringi_1.4.3    bookdown_0.16    grid_3.6.1      
+## [37] cli_1.1.0        tools_3.6.1      magrittr_1.5     lazyeval_0.2.2  
+## [41] crayon_1.3.4     pkgconfig_2.0.3  zeallot_0.1.0    xml2_1.2.2      
+## [45] lubridate_1.7.4  assertthat_0.2.1 rmarkdown_1.16   httr_1.4.1      
+## [49] rstudioapi_0.10  R6_2.4.0         nlme_3.1-140     compiler_3.6.1</code></pre>
+<pre><code>## [1] &quot;2019-12-11 10:20:33 CST&quot;</code></pre>
+<pre><code>##           sysname           release           version          nodename 
+##         &quot;Windows&quot;          &quot;10 x64&quot;     &quot;build 18362&quot; &quot;DESKTOP-2VE5C0P&quot; 
+##           machine             login              user    effective_user 
+##          &quot;x86-64&quot;           &quot;Owner&quot;           &quot;Owner&quot;           &quot;Owner&quot;</code></pre>
+</div>
+</div>
+
+              <hr>
+              <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div>
+            </div>
+          </div>
+          <hr>
+        <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+        </div>
+      </div>
+      
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="/js/docs.min.js"></script>
+<script src="/js/main.js"></script>
+
+<script src="/js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>

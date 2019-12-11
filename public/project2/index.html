@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Javier Granados II" />
+    <meta name="description" content="Describe your website">
+    <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico">
+    <title>Project 2</title>
+    <meta name="generator" content="Hugo 0.60.1" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="/blog/">BLOG</a></li>
+        
+        <li><a href="/projects/">PROJECTS</a></li>
+        
+        <li><a href="/myresume.pdf">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="/project2/">Project 2</a></strong>
+          </h3>
+        </div>
+        <div class="blog-title">
+          <h4>
+          January 1, 0001
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+
+
+<p>Javier Granados II, jg65347</p>
+<hr />
+<div id="introduction" class="section level3">
+<h3>Introduction</h3>
+<pre class="r"><code>library(fivethirtyeight)
+glimpse(mlb_as_play_talent)</code></pre>
+<pre><code>## Observations: 3,930
+## Variables: 15
+## $ bbref_id      &lt;chr&gt; &quot;goldspa01&quot;, &quot;mccutan01&quot;, &quot;harpebr03&quot;, &quot;greinza0...
+## $ yearid        &lt;int&gt; 2015, 2015, 2015, 2015, 2015, 2015, 2015, 2015, ...
+## $ gamenum       &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...
+## $ gameid        &lt;chr&gt; &quot;NLS201507140&quot;, &quot;NLS201507140&quot;, &quot;NLS201507140&quot;, ...
+## $ lgid          &lt;chr&gt; &quot;NL&quot;, &quot;NL&quot;, &quot;NL&quot;, &quot;NL&quot;, &quot;NL&quot;, &quot;NL&quot;, &quot;NL&quot;, &quot;NL&quot;, ...
+## $ startingpos   &lt;chr&gt; &quot;3&quot;, &quot;8&quot;, &quot;9&quot;, &quot;1&quot;, &quot;2&quot;, &quot;5&quot;, &quot;0&quot;, &quot;NULL&quot;, &quot;6&quot;, ...
+## $ off600        &lt;dbl&gt; 36.755724, 33.676168, 30.925454, 0.000000, 21.69...
+## $ def600        &lt;dbl&gt; -0.1172135, -0.1686584, 1.3829694, 0.0000000, 7....
+## $ pitch200      &lt;dbl&gt; 0.000000, 0.000000, 0.000000, 15.645611, 0.00000...
+## $ asg_pa        &lt;int&gt; 3, 3, 3, 0, 2, 3, 2, 0, 2, 2, 0, 1, 1, 1, 0, 0, ...
+## $ asg_ip        &lt;dbl&gt; 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, ...
+## $ offper9innasg &lt;dbl&gt; 0.183778620, 0.168380840, 0.154627269, 0.0000000...
+## $ defper9innasg &lt;dbl&gt; -0.000586068, -0.000843292, 0.006914847, 0.00000...
+## $ pitper9innasg &lt;dbl&gt; 0.00000000, 0.00000000, 0.00000000, 0.15645611, ...
+## $ totper9innasg &lt;dbl&gt; 0.18319255, 0.16753755, 0.16154212, 0.15645611, ...</code></pre>
+<p>The dataset used will be from the fivethirtyeight package known as mlb_as_team_talent. This data set includes every team from every Major League Baseball All-Star game (National and American League). Baseball Reference attempted to rank these best-of-the-best teams by a variety of stats, which mainly tried to specify how many runs are positively contributed (add if on offense, saved if pitching/on defense) by a team or how “talented” this team was, which factored into positive run contribution as well. The main variables used for analysis included 1)lgid (which league the team belonged to), 2)tm_off_talent (total runs of offensive talent above average per game (36 plate appearances)), 3)tm_def_talent (total runs of fielding talent above average per game (36 plate appearances)), 4)tm_pit_talent (total runs of pitching talent above average per game (9 innings)), 5)talent_rspg (expected runs scored per game based on talent), and 6) unadj_pyth (unadjusted pythagorean talent rating). This “talent” was computed using the run portion of the Wins Above Replacement (WAR- a common MLB stat) that was then adjusted for age regression of a team’s players and expected performance to the mean for the ages of the players in question. Pythogorean talent is sourced from the Pythogorean Theorum of Baseball Formula.</p>
+</div>
+<div id="manova" class="section level3">
+<h3>**1. MANOVA</h3>
+<pre class="r"><code># If MANOVA is insignificant, discuss number of tests done if
+# significant and P of at least 1 type I error
+mlb_as_team_talent$lgid &lt;- as.factor(mlb_as_team_talent$lgid)
+MLBman &lt;- manova(cbind(tm_off_talent, tm_def_talent, tm_pit_talent, 
+    unadj_pyth) ~ lgid, data = mlb_as_team_talent)
+summary(MLBman)</code></pre>
+<pre><code>##            Df   Pillai approx F num Df den Df Pr(&gt;F)
+## lgid        1 0.024182   1.0346      4    167  0.391
+## Residuals 170</code></pre>
+<p>Not all numeric varaibles were used, for some variables were adjusted/based off on other variables (ex: adj_pyth calculated based on unadj_pyth, and talent_rspg based on tm_off_talent). Although yearid is considered numeric, it should be considered as categorical. Lastly, mlb_avg_rpg uses all MLB players (not just All-Stars), so it would not make sense to use this variable since the variables used only some of the same players). After performing a MANOVA on the variables in question, the p value was insignificant (p=.46). Therefore, the null hypothesis (for team offensive, defensive, and pitching runs above average, runs based on talent, and talent rank, means of each league are equal) failed to be rejected.</p>
+<pre class="r"><code># P(at least one type I error)
+1 - ((1 - 0.05)^5)</code></pre>
+<pre><code>## [1] 0.2262191</code></pre>
+<p>However, if the results would have been significant, 5 tests would have been performed (1 MANOVA, 4 ANOVAS). The probability of at least one Type I error would be about .23.</p>
+</div>
+<div id="randomization-test" class="section level3">
+<h3>**2. Randomization Test</h3>
+<pre class="r"><code>t.test(unadj_pyth ~ lgid, data = mlb_as_team_talent)</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  unadj_pyth by lgid
+## t = 0.46069, df = 165.57, p-value = 0.6456
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -0.006260745  0.010071653
+## sample estimates:
+## mean in group AL mean in group NL 
+##        0.6397462        0.6378407</code></pre>
+<p>A t-test was performed with unadj_pyth by league. The null hypothesis is that the difference in means in unadj_pyth by league is equal to zero, or the mean unadjusted talent scores between each league are the same on average. The alternative hypothesis is that the difference in means is different for each league, or not the same on average. The p-value for the unadj_pyth by league was insignificant (p=.64), meaning that the null hypothesis failed to be rejected.</p>
+<pre class="r"><code>set.seed(348)
+mlbtest &lt;- vector()
+for (i in 1:5000) {
+    tmean &lt;- data.frame(unpyth = sample(mlb_as_team_talent$unadj_pyth), 
+        league = mlb_as_team_talent$lgid)
+    mlbtest[i] &lt;- mean(tmean[tmean$league == &quot;AL&quot;, ]$unpyth) - 
+        mean(tmean[tmean$league == &quot;NL&quot;, ]$unpyth)
+}
+data.frame(mlbtest) %&gt;% ggplot(aes(mlbtest)) + geom_histogram(aes(y = ..density..), 
+    bins = 30) + geom_density() + ggtitle(&quot;MLB Density Plot&quot;) + 
+    labs(x = &quot;Null Distribution&quot;, y = &quot;Density&quot;)</code></pre>
+<p><img src="/Project2_files/figure-html/unnamed-chunk-5-1.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># v=ALmean-Nlmean
+0.6397462 - 0.6378407</code></pre>
+<pre><code>## [1] 0.0019055</code></pre>
+<pre class="r"><code>mean(mlbtest &gt; 0.0019055) * 2</code></pre>
+<pre><code>## [1] 0.6544</code></pre>
+<p>The p-value for the permutation test is .648, meaning this is the probability of getting a mean difference as the one in this random distribution.</p>
+</div>
+<div id="linear-regression-model" class="section level3">
+<h3>**3. Linear Regression Model</h3>
+<pre class="r"><code>mlb_as_team_talent$team_c &lt;- mlb_as_team_talent$tm_off_talent - 
+    mean(mlb_as_team_talent$tm_off_talent, na.rm = T)
+mlblm &lt;- lm(unadj_pyth ~ team_c * lgid, data = mlb_as_team_talent)
+summary(mlblm)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = unadj_pyth ~ team_c * lgid, data = mlb_as_team_talent)
+## 
+## Residuals:
+##       Min        1Q    Median        3Q       Max 
+## -0.042929 -0.012944 -0.000067  0.010533  0.061234 
+## 
+## Coefficients:
+##                Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)    0.641043   0.002011 318.708   &lt;2e-16 ***
+## team_c         0.095216   0.008601  11.071   &lt;2e-16 ***
+## lgidNL        -0.004223   0.002845  -1.485    0.140    
+## team_c:lgidNL -0.020193   0.012421  -1.626    0.106    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.01862 on 168 degrees of freedom
+## Multiple R-squared:  0.5347, Adjusted R-squared:  0.5264 
+## F-statistic: 64.36 on 3 and 168 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>When controlling for offensive talent (mean centered) and league (AL), unadjusted python (talent) rating is .64. When controlling for league, an increase in offensive talent raised talent rating by .095. When controlling for offensive talent, being in the National League decreased talent rating by .004. If in the NL, an increase in offensive talent actually decreased talent rating by .02.The multiple R-squared value is 0.5347, meaning over half of the variation in the outcome is explained by the model</p>
+<pre class="r"><code>mlb_as_team_talent %&gt;% ggplot(aes(team_c, unadj_pyth, color = lgid)) + 
+    geom_point() + geom_smooth(method = &quot;lm&quot;, se = F) + ggtitle(&quot;Linear Regression Model&quot;) + 
+    labs(x = &quot;Centered Offensive Talent Rating (team_c)&quot;, y = &quot;Talent Rating (unadj_pyth)&quot;)</code></pre>
+<p><img src="/Project2_files/figure-html/unnamed-chunk-8-1.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>resids &lt;- mlblm$residuals
+fitvals &lt;- mlblm$fitted.values
+# linearity and homoskedasicity
+ggplot() + geom_point(aes(fitvals, resids)) + geom_hline(yintercept = 0, 
+    color = &quot;red&quot;) + ggtitle(&quot;Linearity and Homoskedasicity Test&quot;) + 
+    labs(x = &quot;Fitted Values&quot;, y = &quot;Residuals&quot;)</code></pre>
+<p><img src="/Project2_files/figure-html/unnamed-chunk-9-1.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># normality
+ggplot() + geom_histogram(aes(resids), bins = 20) + ggtitle(&quot;Normality Test&quot;) + 
+    labs(x = &quot;Residuals&quot;, y = &quot;Frequency&quot;)</code></pre>
+<p><img src="/Project2_files/figure-html/unnamed-chunk-9-2.png" width="768" style="display: block; margin: auto;" />
+Assumptions appear to have been met graphically.</p>
+<pre class="r"><code>coeftest(mlblm, vcov = vcovHC(mlblm))</code></pre>
+<pre><code>## 
+## t test of coefficients:
+## 
+##                 Estimate Std. Error  t value Pr(&gt;|t|)    
+## (Intercept)    0.6410426  0.0020646 310.4858   &lt;2e-16 ***
+## team_c         0.0952158  0.0080949  11.7624   &lt;2e-16 ***
+## lgidNL        -0.0042234  0.0028656  -1.4738   0.1424    
+## team_c:lgidNL -0.0201931  0.0132594  -1.5229   0.1297    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p>No changes in significances occurred; the only significant coefficient is offensive talent when centered. Estimate value remained the same as well.</p>
+</div>
+<div id="bootstrapped-standard-errors-for-model-above" class="section level3">
+<h3>**4 Bootstrapped Standard Errors for Model Above</h3>
+<pre class="r"><code>boot_dat &lt;- mlb_as_team_talent[sample(nrow(mlb_as_team_talent), 
+    replace = TRUE), ]
+samp_distn &lt;- replicate(5000, {
+    boot_dat &lt;- mlb_as_team_talent[sample(nrow(mlb_as_team_talent), 
+        replace = TRUE), ]
+    mlblm &lt;- lm(unadj_pyth ~ team_c * lgid, data = boot_dat)
+    coef(mlblm)
+})
+samp_distn %&gt;% t %&gt;% as.data.frame %&gt;% summarize_all(sd)</code></pre>
+<pre><code>##   (Intercept)      team_c     lgidNL team_c:lgidNL
+## 1 0.002039373 0.007921832 0.00280576    0.01281299</code></pre>
+<p>The bootstrapped SEs are all close to zero, which is still rather close to the original and robust SEs. Therefore, we would still fail to reject the null hypothesis.</p>
+</div>
+<div id="logistic-regression" class="section level3">
+<h3>**5. Logistic Regression</h3>
+<pre class="r"><code>mlbglm &lt;- glm(lgid ~ unadj_pyth + tm_off_talent, family = &quot;binomial&quot;, 
+    data = mlb_as_team_talent)
+coeftest(mlbglm)</code></pre>
+<pre><code>## 
+## z test of coefficients:
+## 
+##                Estimate Std. Error z value Pr(&gt;|z|)
+## (Intercept)     6.32424    4.68086  1.3511   0.1767
+## unadj_pyth    -12.31690    8.35308 -1.4745   0.1403
+## tm_off_talent   1.57411    0.98542  1.5974   0.1102</code></pre>
+<p>Although none are significant, when controlling for offenseive talent, talent rating descreases the log-odds of being in the NL by about -12. When controlling for talent rating, an increase in offensive talent increases log-odds by 1.57.</p>
+<pre class="r"><code>prob &lt;- predict(mlbglm, type = &quot;response&quot;)
+pred &lt;- ifelse(prob &gt; 0.5, 1, 0)
+table(truth = mlb_as_team_talent$lgid, prediction = pred) %&gt;% 
+    addmargins</code></pre>
+<pre><code>##      prediction
+## truth   0   1 Sum
+##   AL   47  39  86
+##   NL   42  44  86
+##   Sum  89  83 172</code></pre>
+<pre class="r"><code>(47 + 44)/172  # accuracy</code></pre>
+<pre><code>## [1] 0.5290698</code></pre>
+<pre class="r"><code>44/86  # tpr (sensitivity)</code></pre>
+<pre><code>## [1] 0.5116279</code></pre>
+<pre class="r"><code>47/86  # tnr (specificity)</code></pre>
+<pre><code>## [1] 0.5465116</code></pre>
+<pre class="r"><code>44/83  # ppv (precision)</code></pre>
+<pre><code>## [1] 0.5301205</code></pre>
+<p>Based on the confusion matrix, accuracy, TPR, TNR, and PPV are all around .5.</p>
+<pre class="r"><code>mlb_as_team_talent$logit &lt;- predict(mlbglm)  #get predicted log-odds
+ggplot(mlb_as_team_talent, aes(logit, fill = lgid)) + geom_density(alpha = 0.3) + 
+    geom_vline(xintercept = 0, lty = 2) + ggtitle(&quot;Density of Log-Odds&quot;) + 
+    labs(x = &quot;Log-Odds&quot;, y = &quot;Density&quot;)</code></pre>
+<p><img src="/Project2_files/figure-html/unnamed-chunk-14-1.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>MLBROCplot &lt;- ggplot(mlb_as_team_talent) + geom_roc(aes(d = lgid, 
+    m = prob), n.cuts = 0) + geom_segment(aes(x = 0, y = 0, xend = 1, 
+    yend = 1), lty = 2) + scale_x_continuous(limits = c(0, 1)) + 
+    ggtitle(&quot;ROC Plot&quot;) + labs(x = &quot;False Positive Fraction&quot;, 
+    y = &quot;True Positive Fraction&quot;)
+MLBROCplot</code></pre>
+<p><img src="/Project2_files/figure-html/unnamed-chunk-15-1.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>calc_auc(MLBROCplot)</code></pre>
+<pre><code>##   PANEL group       AUC
+## 1     1    -1 0.5605733</code></pre>
+<p>Area under the curve is .56, meaning that FPR is almost equal to TRR.</p>
+<pre class="r"><code>set.seed(1234)
+k = 10  #choose number of folds
+
+
+data1 &lt;- mlb_as_team_talent[sample(nrow(mlb_as_team_talent)), 
+    ]  #randomly order rows
+folds &lt;- cut(seq(1:nrow(mlb_as_team_talent)), breaks = k, labels = F)  #create folds
+
+diags &lt;- NULL
+for (i in 1:k) {
+    ## Create training and test sets
+    train &lt;- data1[folds != i, ]
+    test &lt;- data1[folds == i, ]
+    truth &lt;- test$lgid
+    
+    ## Train model on training set
+    mlbglm &lt;- glm(lgid ~ unadj_pyth + tm_off_talent, data = train, 
+        family = &quot;binomial&quot;)
+    probs &lt;- predict(mlbglm, newdata = test, type = &quot;response&quot;)
+    
+    ## Test model on test set (save all k results)
+    diags &lt;- rbind(diags, class_diag(probs, truth))
+}
+
+
+apply(diags, 2, mean)  #average across all k results</code></pre>
+<pre><code>##       acc      sens      spec       ppv       auc 
+## 0.5120915 0.5266775 0.5494192 0.5348629 0.5576263</code></pre>
+<p>Accuracy (acc), sensitivity (sens), and recall (ppv) based on 10-fold cross validation are shown above.</p>
+</div>
+<div id="lasso-model-with-new-10-fold-cross-validation" class="section level3">
+<h3>**6. Lasso Model with New 10-fold Cross Validation</h3>
+<pre class="r"><code>mlb_as_team_talent &lt;- mlb_as_team_talent %&gt;% dplyr::select(-logit, 
+    -team_c)
+mlbglmlasso &lt;- glm(lgid ~ -1 + yearid + gameid + gamenum + tm_off_talent + 
+    tm_def_talent + tm_pit_talent + mlb_avg_rpg + talent_rspg + 
+    talent_rapg + unadj_pyth + timeline_adj + sos + adj_pyth, 
+    data = mlb_as_team_talent, family = &quot;binomial&quot;)
+x &lt;- model.matrix(mlbglmlasso)
+x &lt;- scale(x)
+y &lt;- as.matrix(mlb_as_team_talent$lgid)
+cv &lt;- cv.glmnet(x, y, family = &quot;binomial&quot;)
+lasso &lt;- glmnet(x, y, family = &quot;binomial&quot;, lambda = cv$lambda.1se)
+coef(lasso)</code></pre>
+<pre><code>## 99 x 1 sparse Matrix of class &quot;dgCMatrix&quot;
+##                               s0
+## (Intercept)         1.318390e-16
+## yearid              .           
+## gameidALS193307060  .           
+## gameidALS193507080  .           
+## gameidALS193707070  .           
+## gameidALS193907110  .           
+## gameidALS194107080  .           
+## gameidALS194307130  .           
+## gameidALS194607090  .           
+## gameidALS194807130  .           
+## gameidALS195007110  .           
+## gameidALS195107100  .           
+## gameidALS195407130  .           
+## gameidALS195607100  .           
+## gameidALS195807080  .           
+## gameidALS196007110  .           
+## gameidALS196007130  .           
+## gameidALS196107310  .           
+## gameidALS196207100  .           
+## gameidALS196307090  .           
+## gameidALS196507130  .           
+## gameidALS196707110  .           
+## gameidALS196907230  .           
+## gameidALS197107130  .           
+## gameidALS197307240  .           
+## gameidALS197507150  .           
+## gameidALS197707190  .           
+## gameidALS197907170  .           
+## gameidALS198108090  .           
+## gameidALS198307060  .           
+## gameidALS198507160  .           
+## gameidALS198707140  .           
+## gameidALS198907110  .           
+## gameidALS199107090  .           
+## gameidALS199307130  .           
+## gameidALS199507110  .           
+## gameidALS199707080  .           
+## gameidALS199907130  .           
+## gameidALS200107100  .           
+## gameidALS200307150  .           
+## gameidALS200507120  .           
+## gameidALS200807150  .           
+## gameidALS201007130  .           
+## gameidALS201207100  .           
+## gameidALS201407150  .           
+## gameidNLS193407100  .           
+## gameidNLS193607070  .           
+## gameidNLS193807060  .           
+## gameidNLS194007090  .           
+## gameidNLS194207060  .           
+## gameidNLS194407110  .           
+## gameidNLS194707080  .           
+## gameidNLS194907120  .           
+## gameidNLS195207080  .           
+## gameidNLS195307140  .           
+## gameidNLS195507120  .           
+## gameidNLS195707090  .           
+## gameidNLS195907070  .           
+## gameidNLS195908030  .           
+## gameidNLS196107110  .           
+## gameidNLS196207300  .           
+## gameidNLS196407070  .           
+## gameidNLS196607120  .           
+## gameidNLS196807090  .           
+## gameidNLS197007140  .           
+## gameidNLS197207250  .           
+## gameidNLS197407230  .           
+## gameidNLS197607130  .           
+## gameidNLS197807110  .           
+## gameidNLS198007080  .           
+## gameidNLS198207130  .           
+## gameidNLS198407100  .           
+## gameidNLS198607150  .           
+## gameidNLS198807120  .           
+## gameidNLS199007100  .           
+## gameidNLS199207140  .           
+## gameidNLS199407120  .           
+## gameidNLS199607090  .           
+## gameidNLS199807070  .           
+## gameidNLS200007110  .           
+## gameidNLS200207090  .           
+## gameidNLS200407130  .           
+## gameidNLS200607110  .           
+## gameidNLS200707100  .           
+## gameidNLS200907140  .           
+## gameidNLS201107120  .           
+## gameidNLS201307160  .           
+## gameidNLS201507140  .           
+## gamenum             .           
+## tm_off_talent       .           
+## tm_def_talent       .           
+## tm_pit_talent      -2.783661e-17
+## mlb_avg_rpg         .           
+## talent_rspg         .           
+## talent_rapg         .           
+## unadj_pyth          .           
+## timeline_adj        .           
+## sos                 .           
+## adj_pyth            .</code></pre>
+<pre class="r"><code># 10-foldCV
+set.seed(1234)
+k = 10  #choose number of folds
+
+
+data1 &lt;- mlb_as_team_talent[sample(nrow(mlb_as_team_talent)), 
+    ]  #randomly order rows
+folds &lt;- cut(seq(1:nrow(mlb_as_team_talent)), breaks = k, labels = F)  #create folds
+
+diags &lt;- NULL
+for (i in 1:k) {
+    ## Create training and test sets
+    train &lt;- data1[folds != i, ]
+    test &lt;- data1[folds == i, ]
+    truth &lt;- test$lgid
+    
+    ## Train model on training set
+    mlbglm &lt;- glm(lgid ~ tm_pit_talent, data = train, family = &quot;binomial&quot;)
+    probs &lt;- predict(mlbglm, newdata = test, type = &quot;response&quot;)
+    
+    ## Test model on test set (save all k results)
+    diags &lt;- rbind(diags, class_diag(probs, truth))
+}
+
+
+apply(diags, 2, mean)</code></pre>
+<pre><code>##       acc      sens      spec       ppv       auc 
+## 0.5473856 0.5641414 0.5526263 0.5705478 0.5700577</code></pre>
+<p>Not all variables were used (no_1_player and no_2_player) becasue the players in these categories were not in the MLB for every all-star game in question. The tm_pit_talent varialbe was retained, and after a 10-fold CV, this model is slightly more accurate than the previous 10 fold CV from part 5 as well as as a slightly higher auc.</p>
+<pre><code>## R version 3.6.1 (2019-07-05)
+## Platform: x86_64-w64-mingw32/x64 (64-bit)
+## Running under: Windows 10 x64 (build 18362)
+## 
+## Matrix products: default
+## 
+## locale:
+## [1] LC_COLLATE=English_United States.1252 
+## [2] LC_CTYPE=English_United States.1252   
+## [3] LC_MONETARY=English_United States.1252
+## [4] LC_NUMERIC=C                          
+## [5] LC_TIME=English_United States.1252    
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+##  [1] fivethirtyeight_0.5.0 glmnet_3.0-1          Matrix_1.2-17        
+##  [4] plotROC_2.2.1         lmtest_0.9-37         zoo_1.8-6            
+##  [7] sandwich_2.5-1        MASS_7.3-51.4         forcats_0.4.0        
+## [10] stringr_1.4.0         dplyr_0.8.3           purrr_0.3.2          
+## [13] readr_1.3.1           tidyr_1.0.0           tibble_2.1.3         
+## [16] ggplot2_3.2.1         tidyverse_1.2.1       knitr_1.25           
+## 
+## loaded via a namespace (and not attached):
+##  [1] Rcpp_1.0.2       lubridate_1.7.4  lattice_0.20-38  assertthat_0.2.1
+##  [5] zeallot_0.1.0    digest_0.6.21    foreach_1.4.7    utf8_1.1.4      
+##  [9] R6_2.4.0         cellranger_1.1.0 plyr_1.8.4       backports_1.1.5 
+## [13] evaluate_0.14    httr_1.4.1       blogdown_0.17    pillar_1.4.2    
+## [17] rlang_0.4.0      lazyeval_0.2.2   readxl_1.3.1     rstudioapi_0.10 
+## [21] rmarkdown_1.16   labeling_0.3     munsell_0.5.0    broom_0.5.2     
+## [25] compiler_3.6.1   modelr_0.1.5     xfun_0.10        pkgconfig_2.0.3 
+## [29] shape_1.4.4      htmltools_0.3.6  tidyselect_0.2.5 bookdown_0.16   
+## [33] codetools_0.2-16 fansi_0.4.0      crayon_1.3.4     withr_2.1.2     
+## [37] grid_3.6.1       nlme_3.1-140     jsonlite_1.6     gtable_0.3.0    
+## [41] lifecycle_0.1.0  magrittr_1.5     formatR_1.7      scales_1.0.0    
+## [45] cli_1.1.0        stringi_1.4.3    xml2_1.2.2       generics_0.0.2  
+## [49] vctrs_0.2.0      iterators_1.0.12 tools_3.6.1      glue_1.3.1      
+## [53] hms_0.5.1        yaml_2.2.0       colorspace_1.4-1 rvest_0.3.4     
+## [57] haven_2.1.1</code></pre>
+<pre><code>## [1] &quot;2019-12-11 10:17:10 CST&quot;</code></pre>
+<pre><code>##           sysname           release           version          nodename 
+##         &quot;Windows&quot;          &quot;10 x64&quot;     &quot;build 18362&quot; &quot;DESKTOP-2VE5C0P&quot; 
+##           machine             login              user    effective_user 
+##          &quot;x86-64&quot;           &quot;Owner&quot;           &quot;Owner&quot;           &quot;Owner&quot;</code></pre>
+</div>
+
+              <hr>
+              <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div>
+            </div>
+          </div>
+          <hr>
+        <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+        </div>
+      </div>
+      
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="/js/docs.min.js"></script>
+<script src="/js/main.js"></script>
+
+<script src="/js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>
