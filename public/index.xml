@@ -6,10 +6,31 @@
     <description>Recent content on Javier Granados II</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Sun, 20 Oct 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 11 Dec 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>(Brief)Intro to Python</title>
+      <link>/blog/pythonexperience/</link>
+      <pubDate>Wed, 11 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/blog/pythonexperience/</guid>
+      <description>Python ExpereinceAlthough my biostats and computational biology courses were based on R Studio, the latter class introduced me to Python. Range of python concepts included basic functions as simple as the one shown below:
+2+2## 4We also got exposed to more advanced tools in python, such as finding IP addresses using Regex (regular expressions) as shown:
+import re string1=&amp;quot;Jan 13 00:48:59: DROP service 68-&amp;gt;67(udp) from 213.92.153.167 to 69.</description>
+    </item>
+    
+    <item>
+      <title>Project 2</title>
+      <link>/project2/</link>
+      <pubDate>Wed, 27 Nov 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/project2/</guid>
+      <description>Javier Granados II, jg65347
+Introductionlibrary(fivethirtyeight)glimpse(mlb_as_play_talent)## Observations: 3,930## Variables: 15## $ bbref_id &amp;lt;chr&amp;gt; &amp;quot;goldspa01&amp;quot;, &amp;quot;mccutan01&amp;quot;, &amp;quot;harpebr03&amp;quot;, &amp;quot;greinza0...## $ yearid &amp;lt;int&amp;gt; 2015, 2015, 2015, 2015, 2015, 2015, 2015, 2015, ...## $ gamenum &amp;lt;int&amp;gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...## $ gameid &amp;lt;chr&amp;gt; &amp;quot;NLS201507140&amp;quot;, &amp;quot;NLS201507140&amp;quot;, &amp;quot;NLS201507140&amp;quot;, ...## $ lgid &amp;lt;chr&amp;gt; &amp;quot;NL&amp;quot;, &amp;quot;NL&amp;quot;, &amp;quot;NL&amp;quot;, &amp;quot;NL&amp;quot;, &amp;quot;NL&amp;quot;, &amp;quot;NL&amp;quot;, &amp;quot;NL&amp;quot;, &amp;quot;NL&amp;quot;, .</description>
+    </item>
     
     <item>
       <title>Project 1-Exploratory Data Analysis</title>
@@ -31,16 +52,6 @@ Introductionlibrary(tidyverse)library(dplyr)library(knitr)library(ggplot2)l
   Project 1
   Project 2
   </description>
-    </item>
-    
-    <item>
-      <title>Project 2</title>
-      <link>/project2/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/project2/</guid>
-      <description>Javier Granados II, jg65347
-Introductionlibrary(fivethirtyeight)glimpse(mlb_as_play_talent)## Observations: 3,930## Variables: 15## $ bbref_id &amp;lt;chr&amp;gt; &amp;quot;goldspa01&amp;quot;, &amp;quot;mccutan01&amp;quot;, &amp;quot;harpebr03&amp;quot;, &amp;quot;greinza0...## $ yearid &amp;lt;int&amp;gt; 2015, 2015, 2015, 2015, 2015, 2015, 2015, 2015, ...## $ gamenum &amp;lt;int&amp;gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...## $ gameid &amp;lt;chr&amp;gt; &amp;quot;NLS201507140&amp;quot;, &amp;quot;NLS201507140&amp;quot;, &amp;quot;NLS201507140&amp;quot;, ...## $ lgid &amp;lt;chr&amp;gt; &amp;quot;NL&amp;quot;, &amp;quot;NL&amp;quot;, &amp;quot;NL&amp;quot;, &amp;quot;NL&amp;quot;, &amp;quot;NL&amp;quot;, &amp;quot;NL&amp;quot;, &amp;quot;NL&amp;quot;, &amp;quot;NL&amp;quot;, .</description>
     </item>
     
   </channel>
