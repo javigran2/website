@@ -1,5 +1,5 @@
 ---
-title: "Project 2"
+title: "Project 2- Modeling"
 author: "SDS348 Fall 2019"
 date: "2019-11-27"
 output:
